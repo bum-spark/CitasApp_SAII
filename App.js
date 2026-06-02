@@ -1,12 +1,20 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView, Pressable, Modal, TextInput } from 'react-native';
 import { useState } from 'react';
+import Formulario from './components/Formulario.js';
 
 export default function App() {
 
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [NombrePaciente, setNombrePaciente] = useState('');
+  const [paciente, setPaciente] = useState({});
+
+  const [pacientes, setPacientes] = useState([]);
+
+
+  const cerrarModal = () => {
+    setModalVisible(false);
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -14,39 +22,12 @@ export default function App() {
         <Text style={styles.tituloBold}> Veterinaria</Text>
       </Text>
 
-      <Modal
-        visible={modalVisible}
-        animationType='slide'
-
-      >
-
-        <View style={styles.campo}>
-          <Text style={styles.label}>Nombre del paciente</Text>
-          <TextInput
-            style={styles.input}
-            placeholder='Nombre del paciente'
-            placeholderTextColor={'#666'}
-            value={NombrePaciente}
-            onChangeText={setNombrePaciente}
-          //maxLength={20}
-          //multiline={true}
-          //numberOfLines={4}
-
-          //tipo
-          //keyboardType='email-addres'
-          />
-        </View>
-
-
-        <View>
-          {/* <Text>Desde el Modal</Text> */}
-          <Pressable onPress={() => setModalVisible(false)} style={styles.btnNuevaCita}>
-            <Text style={styles.btnTextoNuevaCita}>Cerrar Modal</Text>
-          </Pressable>
-        </View>
-      </Modal>
-
-
+      <Formulario
+        modalVisible={modalVisible}
+        cerrarModal={cerrarModal}
+        pacientes={pacientes}
+        setPacientes={setPacientes}
+      />
 
       <Pressable style={styles.btnNuevaCita} onPress={() => { setModalVisible(true); }}>
         <Text style={styles.btnTextoNuevaCita}>Nueva Cita</Text>

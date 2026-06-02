@@ -1,8 +1,7 @@
-import { View, Text, Modal, SafeAreaView, ScrollView, Pressable, StyleSheet } from 'react-native'
+import { View, Text, Modal, SafeAreaView, ScrollView, Pressable, StyleSheet, TextInput, Alert } from 'react-native'
 import React, { useState } from 'react'
-import { TextInput } from 'react-native-web'
 
-const formulario = () => {
+const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
 
     const [id, setId] = useState('')
     const [paciente, setPaciente] = useState('')
@@ -12,16 +11,48 @@ const formulario = () => {
     const [fecha, setFecha] = useState('')
     const [sintomas, setSintomas] = useState('')
 
+    const handlerCita = () => {
+        if ([paciente, propietario, email, telefono, fecha, sintomas].includes('')) {
+            Alert.alert('Error', 'Todos los campos son obligatorios')
+            return
+        }
+
+        const nuevoId = Date.now().toString()
+        setId(nuevoId)
+
+        const nuevoPaciente = {
+            id: nuevoId,
+            paciente,
+            propietario,
+            email,
+            telefono,
+            fecha,
+            sintomas
+        }
+
+        setPacientes([...pacientes, nuevoPaciente])
+
+        cerrarModal()
+
+        setId('')
+        setPaciente('')
+        setPropietario('')
+        setEmail('')
+        setTelefono('')
+        setFecha('')
+        setSintomas('')
+    }
+
     return (
-        <Modal>
-            <SafeAreaView>
+        <Modal animationType='slide' visible={modalVisible}>
+            <SafeAreaView style={styles.formulario}>
                 <ScrollView>
-                    <Text>
+                    <Text style={styles.titulo}>
                         Nueva Cita
                     </Text>
 
-                    <Pressable>
-                        <Text>
+                    <Pressable style={styles.btnCancelar} onPress={cerrarModal}>
+                        <Text style={styles.btnCancelarTexto}>
                             X Cancelar
                         </Text>
                     </Pressable>
@@ -99,11 +130,10 @@ const formulario = () => {
                         />
                     </View>
 
-                    <Pressable style={styles.btnNuevaCita}>
-                        <Text style={styles.btnTextoNuevaCita}>
+                    <Pressable style={styles.btnNuevaCita} onPressOut={handlerCita}>
+                        <Text style={styles.btnNuevaCitaTexto}>
                             Guardar
                         </Text>
-
                     </Pressable>
 
 
@@ -116,34 +146,66 @@ const formulario = () => {
 
 
 const styles = StyleSheet.create({
+    titulo: {
+        fontSize: 30,
+        fontWeight: "600",
+        textAlign: "center",
+        marginTop: 30,
+        color: "#FFF",
+    },
+    tituloBold: {
+        fontWeight: "900",
+    },
+
     campo: {
         marginTop: 10,
         marginHorizontal: 30,
     },
     label: {
-        fontWeight: '600',
-        color: '#280072ff',
+        color: "#FFF",
         marginBottom: 10,
         marginTop: 15,
-        fontSize: 20
+        fontSize: 20,
+        fontWeight: "600",
     },
     input: {
-        backgroundColor: '#fff',
+        backgroundColor: "#FFF",
         padding: 15,
         borderRadius: 10,
-        fontSize: 20,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#94a3b8',
-        paddingRight: 15,
-
     },
     formulario: {
         backgroundColor: "#6D28D9",
-        flex: 1
+        flex: 1,
     },
-
+    btnCancelar: {
+        marginVertical: 30,
+        backgroundColor: "#5827A4",
+        marginHorizontal: 30,
+        padding: 15,
+        borderRadius: 10,
+    },
+    btnCancelarTexto: {
+        color: "#FFF",
+        textAlign: "center",
+        fontWeight: "900",
+        fontSize: 16,
+        textTransform: "uppercase",
+    },
+    btnNuevaCita: {
+        marginVertical: 50,
+        backgroundColor: "#F59E0B",
+        paddingVertical: 15,
+        marginHorizontal: 30,
+        borderRadius: 10,
+    },
+    btnNuevaCitaTexto: {
+        color: "#5827A4",
+        textAlign: "center",
+        fontWeight: "900",
+        fontSize: 16,
+        textTransform: "uppercase",
+    },
 });
 
 
-export default formulario
+export default Formulario
