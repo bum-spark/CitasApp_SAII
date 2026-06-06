@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, Pressable, Modal, TextInput } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Pressable, Modal, TextInput, ScrollView, FlatList } from 'react-native';
 import { useState } from 'react';
 import Formulario from './components/Formulario.js';
+import Paciente from './components/Paciente.js';
 
 export default function App() {
 
@@ -11,6 +12,7 @@ export default function App() {
 
   const [pacientes, setPacientes] = useState([]);
 
+  const [modalPaciente, setModalPaciente] = useState(false);
 
   const cerrarModal = () => {
     setModalVisible(false);
@@ -18,6 +20,8 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
+
+
       <Text style={styles.titulo}>Administrador de Citas
         <Text style={styles.tituloBold}> Veterinaria</Text>
       </Text>
@@ -32,6 +36,27 @@ export default function App() {
       <Pressable style={styles.btnNuevaCita} onPress={() => { setModalVisible(true); }}>
         <Text style={styles.btnTextoNuevaCita}>Nueva Cita</Text>
       </Pressable>
+
+      {pacientes.length === 0 ?
+        <Text style={styles.noPacientes}>No hay pacientes aun</Text> :
+        <FlatList
+          data={pacientes}
+          style={styles.listado}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => {
+            return (
+              <Paciente
+                item={item}
+                setModalVisible={setModalVisible}
+                setPaciente={setPaciente}
+                setModalPaciente={setModalPaciente} //creamos el state
+              />
+            );
+          }}
+        />
+      }
+
+
     </SafeAreaView>
   );
 }
@@ -100,5 +125,5 @@ const styles = StyleSheet.create({
   listado: {
     marginTop: 50,
     marginHorizontal: 30
-  }
+  },
 });

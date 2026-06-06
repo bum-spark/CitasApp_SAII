@@ -1,7 +1,26 @@
 import { View, Text, Modal, SafeAreaView, ScrollView, Pressable, StyleSheet, TextInput, Alert } from 'react-native'
 import React, { useState } from 'react'
+import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker'
+import dayjs from 'dayjs'
+
 
 const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
+
+    const defaultStyles = useDefaultStyles('light')
+    const calendarStyles = {
+        ...defaultStyles,
+        button_prev_image: { tintColor: '#6D28D9' },
+        button_next_image: { tintColor: '#6D28D9' },
+        month_selector_label: { color: '#374151', fontWeight: '700', fontSize: 16 },
+        year_selector_label: { color: '#374151', fontWeight: '700', fontSize: 16 },
+        weekday_label: { color: '#6D28D9', fontWeight: '600', fontSize: 12, textTransform: 'uppercase' },
+        day_label: { color: '#374151' },
+        selected: { backgroundColor: '#6D28D9', borderRadius: 8 },
+        selected_label: { color: '#FFF', fontWeight: '700' },
+        today: { backgroundColor: '#EDE9FE', borderRadius: 8 },
+        today_label: { color: '#6D28D9', fontWeight: '700' },
+        outside_label: { color: '#D1D5DB' },
+    }
 
     const [id, setId] = useState('')
     const [paciente, setPaciente] = useState('')
@@ -9,7 +28,20 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
     const [email, setEmail] = useState('')
     const [telefono, setTelefono] = useState('')
     const [fecha, setFecha] = useState('')
+    const [selectedDate, setSelectedDate] = useState(undefined)
     const [sintomas, setSintomas] = useState('')
+
+    const limpiarFormulario = () => {
+        setId('')
+        setPaciente('')
+        setPropietario('')
+        setEmail('')
+        setTelefono('')
+        setFecha('')
+        setSelectedDate(undefined)
+        setSintomas('')
+        cerrarModal()
+    }
 
     const handlerCita = () => {
         if ([paciente, propietario, email, telefono, fecha, sintomas].includes('')) {
@@ -32,15 +64,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
 
         setPacientes([...pacientes, nuevoPaciente])
 
-        cerrarModal()
-
-        setId('')
-        setPaciente('')
-        setPropietario('')
-        setEmail('')
-        setTelefono('')
-        setFecha('')
-        setSintomas('')
+        limpiarFormulario()
     }
 
     return (
@@ -51,7 +75,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
                         Nueva Cita
                     </Text>
 
-                    <Pressable style={styles.btnCancelar} onPress={cerrarModal}>
+                    <Pressable style={styles.btnCancelar} onPress={limpiarFormulario}>
                         <Text style={styles.btnCancelarTexto}>
                             X Cancelar
                         </Text>
@@ -106,16 +130,24 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
 
                     <View style={styles.campo}>
                         <Text style={styles.label}>Fecha</Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder='Fecha'
-                            placeholderTextColor={'#666'}
-                            value={fecha}
-                            onChangeText={setFecha}
-
-
-                        />
+                        <View style={styles.datePickerContainer}>
+                            <DateTimePicker
+                                mode="single"
+                                date={selectedDate}
+                                minDate={dayjs()}
+                                onChange={({ date }) => {
+                                    setSelectedDate(date)
+                                    setFecha(dayjs(date).format('DD/MM/YYYY'))
+                                }}
+                                styles={calendarStyles}
+                                disabledDates={(date) => [0, 6].includes(dayjs(date).day())}
+                            />
+                        </View>
+                        {fecha !== '' && (
+                            <Text style={styles.fechaSeleccionada}>Fecha seleccionada: {fecha}</Text>
+                        )}
                     </View>
+
 
                     <View style={styles.campo}>
                         <Text style={styles.label}>Sintomas</Text>
@@ -204,6 +236,19 @@ const styles = StyleSheet.create({
         fontWeight: "900",
         fontSize: 16,
         textTransform: "uppercase",
+    },
+    datePickerContainer: {
+        backgroundColor: "#FFF",
+        borderRadius: 10,
+        padding: 10,
+        marginTop: 5,
+    },
+    fechaSeleccionada: {
+        color: "#FFF",
+        marginTop: 10,
+        fontSize: 16,
+        fontWeight: "600",
+        textAlign: "center",
     },
 });
 
