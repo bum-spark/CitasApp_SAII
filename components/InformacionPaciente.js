@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     valor: {
-        color: "#F59E0B",
+        color: "#000000ff",
         fontSize: 20,
         fontWeight: "700",
     },
     btnCerrar: {
         marginVertical: 30,
-        backgroundColor: "#E06900",
+        backgroundColor: "#e00000ff",
         marginHorizontal: 30,
         padding: 15,
         borderRadius: 10,
