@@ -78,6 +78,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes, pacien
             const index = pacientesActualizados.findIndex(p => p.id === id)
             pacientesActualizados[index] = pacienteEditado
             setPacientes(pacientesActualizados)
+            limpiarFormulario()
         } else {
             const nuevoId = Date.now().toString()
             const nuevoPaciente = {
@@ -90,9 +91,9 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes, pacien
                 sintomas
             }
             setPacientes([...pacientes, nuevoPaciente])
+            limpiarFormulario()
         }
 
-        limpiarFormulario()
     }
 
     return (
