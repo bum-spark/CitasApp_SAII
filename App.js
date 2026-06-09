@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, SafeAreaView, Pressable, Modal, TextInput, Scro
 import { useState } from 'react';
 import Formulario from './components/Formulario.js';
 import Paciente from './components/Paciente.js';
+import InformacionPaciente from './components/InformacionPaciente.js';
 
 export default function App() {
 
@@ -18,6 +19,7 @@ export default function App() {
     setModalVisible(false);
   }
 
+
   return (
     <SafeAreaView style={styles.container}>
 
@@ -31,11 +33,21 @@ export default function App() {
         cerrarModal={cerrarModal}
         pacientes={pacientes}
         setPacientes={setPacientes}
+        paciente={paciente}
+        setPaciente={setPaciente}
       />
 
       <Pressable style={styles.btnNuevaCita} onPress={() => { setModalVisible(true); }}>
         <Text style={styles.btnTextoNuevaCita}>Nueva Cita</Text>
       </Pressable>
+
+      {modalPaciente && (
+        <InformacionPaciente
+          paciente={paciente}
+          setPaciente={setPaciente}
+          setModalPaciente={setModalPaciente}
+        />
+      )}
 
       {pacientes.length === 0 ?
         <Text style={styles.noPacientes}>No hay pacientes aun</Text> :
@@ -45,6 +57,7 @@ export default function App() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => {
             return (
+
               <Paciente
                 item={item}
                 setModalVisible={setModalVisible}

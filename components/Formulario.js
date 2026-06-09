@@ -1,10 +1,10 @@
 import { View, Text, Modal, SafeAreaView, ScrollView, Pressable, StyleSheet, TextInput, Alert } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker'
 import dayjs from 'dayjs'
 
 
-const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
+const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes, paciente: pacienteDatos, setPaciente: setPacienteDatos }) => {
 
     const defaultStyles = useDefaultStyles('light')
     const calendarStyles = {
@@ -31,6 +31,20 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
     const [selectedDate, setSelectedDate] = useState(undefined)
     const [sintomas, setSintomas] = useState('')
 
+    useEffect(() => {
+        if (pacienteDatos.id) {
+            setId(pacienteDatos.id)
+            setPaciente(pacienteDatos.paciente)
+            setPropietario(pacienteDatos.propietario)
+            setEmail(pacienteDatos.email)
+            setTelefono(pacienteDatos.telefono)
+            setFecha(pacienteDatos.fecha)
+            const parts = pacienteDatos.fecha.split('/')
+            setSelectedDate(dayjs(`${parts[2]}-${parts[1]}-${parts[0]}`))
+            setSintomas(pacienteDatos.sintomas)
+        }
+    }, [pacienteDatos])
+
     const limpiarFormulario = () => {
         setId('')
         setPaciente('')
@@ -40,6 +54,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
         setFecha('')
         setSelectedDate(undefined)
         setSintomas('')
+        setPacienteDatos({})
         cerrarModal()
     }
 
@@ -49,20 +64,33 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
             return
         }
 
-        const nuevoId = Date.now().toString()
-        setId(nuevoId)
-
-        const nuevoPaciente = {
-            id: nuevoId,
-            paciente,
-            propietario,
-            email,
-            telefono,
-            fecha,
-            sintomas
+        if (id) {
+            const pacienteEditado = {
+                id,
+                paciente,
+                propietario,
+                email,
+                telefono,
+                fecha,
+                sintomas
+            }
+            const pacientesActualizados = [...pacientes]
+            const index = pacientesActualizados.findIndex(p => p.id === id)
+            pacientesActualizados[index] = pacienteEditado
+            setPacientes(pacientesActualizados)
+        } else {
+            const nuevoId = Date.now().toString()
+            const nuevoPaciente = {
+                id: nuevoId,
+                paciente,
+                propietario,
+                email,
+                telefono,
+                fecha,
+                sintomas
+            }
+            setPacientes([...pacientes, nuevoPaciente])
         }
-
-        setPacientes([...pacientes, nuevoPaciente])
 
         limpiarFormulario()
     }
@@ -72,7 +100,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
             <SafeAreaView style={styles.formulario}>
                 <ScrollView>
                     <Text style={styles.titulo}>
-                        Nueva Cita
+                        {pacienteDatos.id ? 'Editar' : 'Nueva'} Cita
                     </Text>
 
                     <Pressable style={styles.btnCancelar} onPress={limpiarFormulario}>
@@ -164,7 +192,7 @@ const Formulario = ({ modalVisible, cerrarModal, pacientes, setPacientes }) => {
 
                     <Pressable style={styles.btnNuevaCita} onPressOut={handlerCita}>
                         <Text style={styles.btnNuevaCitaTexto}>
-                            Guardar
+                            {pacienteDatos.id ? 'Editar Paciente' : 'Guardar'}
                         </Text>
                     </Pressable>
 

@@ -5,17 +5,23 @@ const Paciente = ({
     item,
     setModalVisible, //para la edicion
     setPaciente, //para la edicion
-    setModalPaciente
+    setModalPaciente,
 }) => {
     return (
-        <Pressable>
+        <Pressable onLongPress={() => {
+            setPaciente(item)
+            setModalPaciente(true)
+        }}>
             <View style={styles.contenedor}>
                 <Text style={styles.label}>Paciente:</Text>
                 <Text style={styles.texto}>{item.paciente}</Text>
                 <Text style={styles.fecha}>{item.fecha}</Text>
 
                 <View style={styles.contenedorBotones}>
-                    <Pressable style={[styles.btn, styles.btnEditar]}>
+                    <Pressable style={[styles.btn, styles.btnEditar]} onPress={() => {
+                        setPaciente(item)
+                        setModalVisible(true)
+                    }}>
                         <Text style={styles.btnText}>Editar</Text>
                     </Pressable>
 
